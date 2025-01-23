@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Risk Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="w-full max-w-3xl p-6 space-y-6 bg-white rounded-md shadow-md">
+            <h1 class="text-2xl font-bold text-center text-blue-600">
+                Disease Risk Assessment
+            </h1>
+            
+            <div id="error-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span id="error-message" class="block sm:inline"></span>
+            </div>
+            
+            <form id="risk-assessment-form" class="space-y-4">
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Patient Name"
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <input
+                    type="number"
+                    name="age"
+                    placeholder="Age"
+                    min="0"
+                    max="120"
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <select
+                    name="gender"
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <textarea
+                    name="symptoms"
+                    placeholder="Symptoms (e.g., fatigue, cough)"
+                    rows="3"
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                ></textarea>
+                <textarea
+                    name="medicalHistory"
+                    placeholder="Medical History (e.g., diabetes, hypertension)"
+                    rows="3"
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                ></textarea>
+                <textarea
+                    name="lifestyle"
+                    placeholder="Lifestyle (e.g., smoking, sedentary)"
+                    rows="3"
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                ></textarea>
+                <button
+                    type="submit"
+                    id="submit-btn"
+                    class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+                >
+                    Get Assessment
+                </button>
+            </form>
+            
+            <div id="assessment-container" class="mt-4 p-4 bg-gray-50 rounded-md hidden">
+                <h2 class="text-lg font-bold text-gray-700 mb-2">Assessment:</h2>
+                <p id="assessment-result" class="text-gray-600 whitespace-pre-line"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('risk-assessment-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const errorContainer = document.getElementById('error-container');
+            const errorMessage = document.getElementById('error-message');
+            const assessmentContainer = document.getElementById('assessment-container');
+            const assessmentResult = document.getElementById('assessment-result');
+
+            const validateForm = () => {
+                const name = form.name.value.trim();
+                const age = form.age.value;
+                const gender = form.gender.value;
+                const symptoms = form.symptoms.value.trim();
+
+                if (!name) {
+                    showError("Please enter patient name");
+                    return false;
+                }
+                if (!age || parseInt(age) <= 0) {
+                    showError("Please enter a valid age");
+                    return false;
+                }
+                if (!gender) {
+                    showError("Please select a gender");
+                    return false;
+                }
+                if (!symptoms) {
+                    showError("Please describe symptoms");
+                    return false;
+                }
+
+                return true;
+            };
+
+            const showError = (message) => {
+                errorContainer.classList.remove('hidden');
+                errorMessage.textContent = message;
+            };
+
+            const clearError = () => {
+                errorContainer.classList.add('hidden');
+                errorMessage.textContent = '';
+            };
+
+            const generatePrompt = () => {
+                return `
+                    Perform a comprehensive disease risk assessment based on the following patient details:
+
+                    Patient Profile:
+                    - Name: ${form.name.value}
+                    - Age: ${form.age.value}
+                    - Gender: ${form.gender.value}
+
+                    Clinical Information:
+                    Symptoms: ${form.symptoms.value}
+                    Medical History: ${form.medicalHistory.value}
+                    Lifestyle Factors: ${form.lifestyle.value}
+
+                    Please provide:
+                    1. Potential disease risks
+                    2. Recommended preventive measures
+                    3. Suggested follow-up actions
+
+                    Respond in a clear, structured, and compassionate manner.
+                `;
+            };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearError();
+                assessmentContainer.classList.add('hidden');
+
+                if (!validateForm()) return;
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Assessing...';
+
+                try {
+                    const prompt = generatePrompt();
+                    const response = await puter.ai.chat(prompt);
+                    assessmentResult.textContent = response;
+                    assessmentContainer.classList.remove('hidden');
+                } catch (error) {
+                    showError(error.message || 'An unexpected error occurred');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Get Assessment';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

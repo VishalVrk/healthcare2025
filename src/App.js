@@ -11,6 +11,9 @@ import DoctorProfiles from './components/DoctorProfiles';
 import PrescriptionManager from './components/PrescriptionManager';
 import DoctorRegistration from './components/DoctorRegistration';
 import Layout from './components/Layout';
+import PredictiveHealthAnalytics from './components/PredictiveHealthAnalytics'
+import DiseaseRiskAssessment from './components/DiseaseRiskAssessment'
+import TreatmentRecommendationEngine from './components/TreatmentRecommendationEngine'
 
 function App() {
   const [user, setUser] = useState(null);
@@ -57,6 +60,9 @@ function App() {
             <Route path="/doctor-profiles" element={<DoctorProfiles />} />
             <Route path="/prescription-manager" element={<PrescriptionManager />} />
             <Route path="/doctor-registration" element={<DoctorRegistration />} />
+            <Route path="/health-analytics" element={<PredictiveHealthAnalytics />} />
+            <Route path="/disease-risk" element={<DiseaseRiskAssessment />} />
+            <Route path="/treatment-recommendation" element={<TreatmentRecommendationEngine />} />
           </Routes>
             </Layout>
         </div>

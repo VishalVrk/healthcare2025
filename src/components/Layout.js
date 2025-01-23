@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, UserPlus, Calendar, Users, FileText, LogOut, PlusCircle } from 'lucide-react';
+import { Home, UserPlus, Calendar, Users, FileText, LogOut, PlusCircle,BarChart,Stethoscope,HeartPulse } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -12,6 +12,10 @@ const Layout = ({ children }) => {
     { path: '/appointment-scheduler', label: 'Appointments', icon: Calendar },
     { path: '/doctor-profiles', label: 'Doctors', icon: Users },
     { path: '/prescription-manager', label: 'Prescriptions', icon: FileText },
+    { path: '/health-analytics', label: 'Predictive Health', icon: BarChart },
+    { path: '/disease-risk', label: 'Disease Risk Assessment', icon: Stethoscope },
+    { path: '/treatment-recommendation', label: 'Treatment Recommendation Engine', icon: HeartPulse },
+    
   ];
 
   const isActivePath = (path) => location.pathname === path;

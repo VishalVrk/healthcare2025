@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treatment Recommendation Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.puter.com/v2/"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-3xl p-6 space-y-6 bg-white rounded-md shadow-md">
+      <h1 class="text-2xl font-bold text-center text-green-600">
+        Treatment Recommendation Engine
+      </h1>
+      <form id="recommendation-form" class="space-y-4">
+        <input
+          type="text"
+          id="name"
+          placeholder="Patient Name"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <input
+          type="number"
+          id="age"
+          placeholder="Age"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <select
+          id="gender"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        >
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <textarea
+          id="diagnosis"
+          placeholder="Diagnosis (e.g., Type 2 Diabetes, Hypertension)"
+          rows="3"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        ></textarea>
+        <textarea
+          id="symptoms"
+          placeholder="Symptoms (e.g., Fatigue, High Blood Pressure)"
+          rows="3"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        ></textarea>
+        <textarea
+          id="allergies"
+          placeholder="Allergies or Medication Intolerances"
+          rows="2"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        ></textarea>
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+        >
+          Get Recommendation
+        </button>
+      </form>
+      <div id="result-container" class="mt-4">
+        <h2 class="text-lg font-bold text-gray-700">Recommended Treatment:</h2>
+        <p id="recommendation" class="text-gray-600 whitespace-pre-line">No recommendation yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('recommendation-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const age = document.getElementById('age').value.trim();
+      const gender = document.getElementById('gender').value.trim();
+      const diagnosis = document.getElementById('diagnosis').value.trim();
+      const symptoms = document.getElementById('symptoms').value.trim();
+      const allergies = document.getElementById('allergies').value.trim();
+      const recommendationContainer = document.getElementById('recommendation');
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (!name || !age || !gender || !diagnosis || !symptoms || !allergies) {
+        recommendationContainer.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      submitBtn.textContent = "Analyzing...";
+      submitBtn.disabled = true;
+
+      try {
+        const prompt = `
+          Based on the following patient information, provide a detailed treatment recommendation:
+
+          Name: ${name}
+          Age: ${age}
+          Gender: ${gender}
+          Diagnosis: ${diagnosis}
+          Symptoms: ${symptoms}
+          Allergies or Medication Intolerances: ${allergies}
+
+          Provide specific treatments, medications, or lifestyle adjustments tailored to this patient.
+        `;
+
+        const response = await puter.ai.chat(prompt);
+        recommendationContainer.textContent = response.trim();
+      } catch (error) {
+        console.error("Error:", error);
+        recommendationContainer.textContent = "An error occurred while fetching the recommendation.";
+      } finally {
+        submitBtn.textContent = "Get Recommendation";
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
